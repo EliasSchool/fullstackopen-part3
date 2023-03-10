@@ -81,7 +81,7 @@ app.get("/api/persons", (req, res) => {
 app.delete("/api/persons/:id", (req, res) => {
     const id = Number(req.params.id) 
     const person = persons.find(p => p.id === id)
-    const index = newpersons.findIndex(p => p.id === id)
+    const index = persons.findIndex(p => p.id === id)
     if (index > -1) {
         persons.splice(index, 1)
     }
