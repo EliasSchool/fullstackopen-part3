@@ -81,7 +81,12 @@ app.get("/api/persons", (req, res) => {
 app.delete("/api/persons/:id", (req, res) => {
     const id = Number(req.params.id) 
     const person = persons.find(p => p.id === id)
-
+    const newpersons = [...persons]
+    const index = newpersons.findIndex(p => p.id === id)
+    if (index > -1) {
+        newpersons.splice(index, 1)
+        persons = persons.concat(newpersons)
+    }
     res.status(204).end()
 })
 
