@@ -4,7 +4,7 @@ const app = express();
 const morgan = require('morgan');
 const cors = require('cors');
 const mongoose = require('mongoose');
-const Person = require('./models/person');
+const Contacts = require('./models/contact');
 app.use(cors());
 app.use(express.json());
 app.use(express.static('build')); 
@@ -22,37 +22,14 @@ app.use(morgan((tokens, req, res) => {
 }))
 
 
-let persons = [
-    { 
-        name: "Arto Hellas", 
-        number: "040-123456",
-        id: 1
-    },
-    { 
-        name: "Ada Lovelace", 
-        number: "39-44-5323523",
-        id: 2
-    },
-    { 
-        name: "Dan Abramov", 
-        number: "12-43-234345",
-        id: 3
-    },
-    { 
-        name: "Mary Poppendieck", 
-        number: "39-23-6423122",
-        id: 4
-    }
-]
-
 
 app.get("/info", (req, res, next) => {
     const date  = new Date()
-    Person.find().then(persons => {
-        if (persons){
+    Contacts.find().then(contacts => {
+        if (contacts){
             res.send(`
             <div> 
-            <p>Phonebook has info for ${persons.length} persons</p>
+            <p>Phonebook has info for ${contacts.length} persons</p>
             <div/> 
             <div>
             <p>${date}</p>
@@ -66,7 +43,7 @@ app.get("/info", (req, res, next) => {
 })
 
 app.get("/api/persons/:id", (req, res, next) => {
-    Person.findById(req.params.id).then(person => {
+    Contacts.findById(req.params.id).then(person => {
         if(person){
             res.json(person)
         } else {
@@ -77,7 +54,7 @@ app.get("/api/persons/:id", (req, res, next) => {
 }) 
 
 app.get("/api/persons", (req, res, next) => {
-    Person.find().then(persons => {
+    Contacts.find().then(persons => {
         if(persons) {
             res.json(persons)
         } else {
@@ -88,7 +65,7 @@ app.get("/api/persons", (req, res, next) => {
 })
 
 app.delete("/api/persons/:id", (req, res, next) => {
-    Person.findByIdAndRemove(req.params.id)
+    Contacts.findByIdAndRemove(req.params.id)
         .then(result => {
             res.status(204).end()
         }) 
@@ -102,24 +79,24 @@ app.post("/api/persons", (req, res, next) => {
         return res.status(400).json({ error: "Missing name or person" })
     } 
     
-    const person = new Person({
+    const contact = new Contacts({
         name : body.name,
         number : body.number,
     }) 
     
-    person.save()
+    contact.save()
         .then(savedPerson => res.json(savedPerson)) 
         .catch(error => next(error))
     }) 
 
 app.put("/api/persons/:id", (req, res, next) => {
     const body = req.body
-    const person = {
+    const contacts = {
         name : body.name,
         number : body.number,
     } 
 
-    Person.findByIdAndUpdate(req.params.id, person, { new: true })
+    Contacts.findByIdAndUpdate(req.params.id, contacts, { new: true })
         .then(updatedPerson => {
             res.json(updatedPerson)
         }) 
