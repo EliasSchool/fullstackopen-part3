@@ -1,8 +1,8 @@
-require('dotenv').config();
 const express = require('express');
 const app = express();
 const morgan = require('morgan');
 const cors = require('cors');
+require('dotenv').config();
 const mongoose = require('mongoose');
 const Contacts = require('./models/contact');
 app.use(cors());
@@ -87,7 +87,7 @@ app.post("/api/persons", (req, res, next) => {
     contact.save()
         .then(savedPerson => res.json(savedPerson)) 
         .catch(error => next(error))
-    }) 
+}) 
 
 app.put("/api/persons/:id", (req, res, next) => {
     const body = req.body
@@ -108,22 +108,22 @@ const unknownEndpoint = (req, res) => {
     res.status(404).send({ error: 'unknown endpoint' })
 }
 
-app.use(unknownEndpoint)
+
 const errorHandler = (error, request, response, next) => {
-    console.log(error.message, "sselvä")
-    console.log("ookoo")
+    console.log(error.message)
     if (error.name === 'CastError') {
         return response.status(400).send({ error: 'malformatted id' })
+    } else if (error.name === 'ValidationError') {
+        response.status(400).json({ error: error.message })
     }
-    else if (error.name === 'ValidationError' || error.name === 'ReferenceError') {
-        return response.status(400).send({ error: error.message })
-    }
+    
     next(error)    
 }
 
+app.use(unknownEndpoint)
 app.use(errorHandler)
 
-const PORT = process.env.PORT
+const PORT = process.env.PORT 
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)

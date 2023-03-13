@@ -14,8 +14,22 @@ mongoose.connect(url)
   })
 
 const contactsSchema = new mongoose.Schema({
-    name: String, 
-    number: String, 
+    name: {
+      type: String,
+      minlength: 3,
+      required: true
+    }, 
+    number: {
+      type: String,
+      minlength: [8, "The number must be at least 8 numbers long"],
+      validate: {
+        validator: function(v) {
+          return /^[0-9]{2,3}-[0-9]+$/i.test(v);
+        },
+        message: props => `${props.value} is not a valid format!`
+      },
+      required: true
+    } 
 })
 
 contactsSchema.set('toJSON', {
